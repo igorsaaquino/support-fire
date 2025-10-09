@@ -1,22 +1,28 @@
 package com.example.supportfire
 
 import android.os.Bundle
-import androidx.activity.compose.setContent
 import androidx.activity.ComponentActivity
-import androidx.compose.foundation.background
+import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import androidx.navigation.NavType
+import com.example.supportfire.ui.HomeScreen
+// IMPORTAR AS NOVAS TELAS QUE VAMOS CRIAR
+import com.example.supportfire.ui.screens.BombeiroCivilScreen
+import com.example.supportfire.ui.screens.BrigadistaMirimScreen
 import com.example.supportfire.ui.screens.RegistrationScreen
 import com.example.supportfire.ui.screens.RegistrationSuccessScreen
-import com.example.supportfire.ui.HomeScreen
+import com.example.supportfire.ui.screens.SocorristaScreen
 import com.example.supportfire.ui.theme.SupportFireTheme
+import java.net.URLDecoder
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,34 +32,74 @@ class MainActivity : ComponentActivity() {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
                     val navController = rememberNavController()
                     NavHost(navController = navController, startDestination = "home") {
+
+                        // Tela Principal (Home)
                         composable("home") {
-                            HomeScreen(onNavigateToRegistration = {
-                                navController.navigate("registration")
-                            })
+                            HomeScreen(
+                                // ATUALIZAÇÃO: Agora navega para a tela de detalhes do curso
+                                onNavigateToCourseDetails = { courseRoute ->
+                                    navController.navigate(courseRoute)
+                                }
+                            )
                         }
-                        composable("registration") {
+
+                        // --- NOVAS ROTAS PARA AS TELAS DE DETALHES ---
+
+                        composable("bombeiro_civil_details") {
+                            BombeiroCivilScreen(
+                                onNavigateToRegistration = { courseName ->
+                                    val encodedCourseName = URLEncoder.encode(courseName, StandardCharsets.UTF_8.toString())
+                                    navController.navigate("registration/$encodedCourseName")
+                                }
+                            )
+                        }
+
+                        composable("socorrista_details") {
+                            SocorristaScreen(
+                                onNavigateToRegistration = { courseName ->
+                                    val encodedCourseName = URLEncoder.encode(courseName, StandardCharsets.UTF_8.toString())
+                                    navController.navigate("registration/$encodedCourseName")
+                                }
+                            )
+                        }
+
+                        composable("brigadista_mirim_details") {
+                            BrigadistaMirimScreen(
+                                onNavigateToRegistration = { courseName ->
+                                    val encodedCourseName = URLEncoder.encode(courseName, StandardCharsets.UTF_8.toString())
+                                    navController.navigate("registration/$encodedCourseName")
+                                }
+                            )
+                        }
+
+                        // Rota para o Formulário de Registro (continua a mesma)
+                        composable(
+                            "registration/{courseName}",
+                            arguments = listOf(navArgument("courseName") { type = NavType.StringType })
+                        ) { backStackEntry ->
+                            val encodedCourseName = backStackEntry.arguments?.getString("courseName") ?: ""
+                            val courseName = URLDecoder.decode(encodedCourseName, StandardCharsets.UTF_8.toString())
+
                             RegistrationScreen(
+                                selectedCourse = courseName,
                                 onRegistrationSuccess = { registrationCode ->
-                                    // Navega para a tela de sucesso passando o código
                                     navController.navigate("success/$registrationCode") {
-                                        // Limpa a pilha de navegação para que o usuário não volte para o formulário
                                         popUpTo("home")
                                     }
                                 }
                             )
                         }
-                        // --- NOVA ROTA PARA A TELA DE SUCESSO ---
+
+                        // Rota para a tela de Sucesso (continua a mesma)
                         composable(
-                            route = "success/{registrationCode}", // A rota aceita um argumento
+                            "success/{registrationCode}",
                             arguments = listOf(navArgument("registrationCode") { type = NavType.StringType })
                         ) { backStackEntry ->
                             val code = backStackEntry.arguments?.getString("registrationCode")
                             RegistrationSuccessScreen(
                                 registrationCode = code,
                                 onGoToHome = {
-                                    navController.navigate("home") {
-                                        popUpTo("home") { inclusive = true }
-                                    }
+                                    navController.navigate("home") { popUpTo("home") { inclusive = true } }
                                 }
                             )
                         }
