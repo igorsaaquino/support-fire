@@ -13,7 +13,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.supportfire.ui.HomeScreen
-// IMPORTAR AS NOVAS TELAS QUE VAMOS CRIAR
 import com.example.supportfire.ui.screens.BombeiroCivilScreen
 import com.example.supportfire.ui.screens.BrigadistaMirimScreen
 import com.example.supportfire.ui.screens.RegistrationScreen
@@ -33,23 +32,22 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     NavHost(navController = navController, startDestination = "home") {
 
-                        // Tela Principal (Home)
                         composable("home") {
                             HomeScreen(
-                                // ATUALIZAÇÃO: Agora navega para a tela de detalhes do curso
                                 onNavigateToCourseDetails = { courseRoute ->
                                     navController.navigate(courseRoute)
                                 }
                             )
                         }
 
-                        // --- NOVAS ROTAS PARA AS TELAS DE DETALHES ---
-
                         composable("bombeiro_civil_details") {
                             BombeiroCivilScreen(
                                 onNavigateToRegistration = { courseName ->
                                     val encodedCourseName = URLEncoder.encode(courseName, StandardCharsets.UTF_8.toString())
                                     navController.navigate("registration/$encodedCourseName")
+                                },
+                                onNavigateHome = {
+                                    navController.popBackStack()
                                 }
                             )
                         }
@@ -59,6 +57,9 @@ class MainActivity : ComponentActivity() {
                                 onNavigateToRegistration = { courseName ->
                                     val encodedCourseName = URLEncoder.encode(courseName, StandardCharsets.UTF_8.toString())
                                     navController.navigate("registration/$encodedCourseName")
+                                },
+                                onNavigateHome = {
+                                    navController.popBackStack()
                                 }
                             )
                         }
@@ -68,11 +69,13 @@ class MainActivity : ComponentActivity() {
                                 onNavigateToRegistration = { courseName ->
                                     val encodedCourseName = URLEncoder.encode(courseName, StandardCharsets.UTF_8.toString())
                                     navController.navigate("registration/$encodedCourseName")
+                                },
+                                onNavigateHome = {
+                                    navController.popBackStack()
                                 }
                             )
                         }
 
-                        // Rota para o Formulário de Registro (continua a mesma)
                         composable(
                             "registration/{courseName}",
                             arguments = listOf(navArgument("courseName") { type = NavType.StringType })
@@ -86,11 +89,13 @@ class MainActivity : ComponentActivity() {
                                     navController.navigate("success/$registrationCode") {
                                         popUpTo("home")
                                     }
+                                },
+                                onNavigateHome = {
+                                    navController.popBackStack()
                                 }
                             )
                         }
 
-                        // Rota para a tela de Sucesso (continua a mesma)
                         composable(
                             "success/{registrationCode}",
                             arguments = listOf(navArgument("registrationCode") { type = NavType.StringType })
