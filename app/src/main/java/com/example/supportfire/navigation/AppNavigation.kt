@@ -5,7 +5,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.supportfire.ui.HomeScreen
-import com.example.supportfire.ui.RegistrationScreen
+import com.example.supportfire.ui.screens.RegistrationScreen
 
 object AppRoutes {
     const val HOME = "home"

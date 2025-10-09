@@ -1,5 +1,7 @@
 package com.example.supportfire.ui // Your original package
 
+import android.widget.Space
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -12,11 +14,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.supportfire.ui.theme.Orange800 // <-- ADD THIS IMPORT
+import com.example.supportfire.R
+import com.example.supportfire.ui.theme.Orange800
 
 @Composable
 fun HomeScreen(onNavigateToRegistration: () -> Unit) {
@@ -35,17 +39,35 @@ fun HomeScreen(onNavigateToRegistration: () -> Unit) {
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "Support Fire",
-            fontSize = 48.sp,
+            text = "Brigadista Mirim",
+            fontSize = 45.sp,
             fontWeight = FontWeight.Bold,
             color = Color.White,
             textAlign = TextAlign.Center
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(10.dp))
+
+        Image(
+            painter = painterResource(id = R.drawable.slider_2),
+            "Logotipo do Support Fire",
+            modifier = Modifier.size(900.dp, 300.dp)
+        )
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+//        Text(
+//            text = "Formando jovens heróis desde cedo. Aprenda sobre primeiros socorros, combate a incêndios, meio ambiente e cidadania.",
+//            fontSize = 18.sp,
+//            color = Color.White,
+//            textAlign = TextAlign.Center,
+//            modifier = Modifier.padding(horizontal = 16.dp)
+//        )
+//
+//        Spacer(modifier = Modifier.height(48.dp))
 
         Text(
-            text = "Formando jovens heróis desde cedo. Aprenda sobre primeiros socorros, combate a incêndios, meio ambiente e cidadania.",
+            text = "A Support Fire propôs a criação do “Curso de Brigadista Mirim” como um instrumento, atuando, especialmente, com foco na promoção da qualidade de vida, prevenção da criminalidade e da violência, através de um conjunto estruturado de políticas públicas voltadas para a inclusão social, integração e mobilização comunitária. Esse conjunto de ações tem como eixos principais a defesa da vida, o respeito à cidadania e a garantia dos direitos fundamentais da criança e do adolescente.No curso, os alunos aprenderão noções nas atividades de Defesa Civil, Primeiros Socorros, Combate a Incêndio, Oceanografia, Preservação do Meio Ambiente, Doenças Sexualmente Transmissíveis, Drogas e seus Malefícios, Profissões, Acidentes Domésticos, Acidentes Automobilísticos, Animais Peçonhentos e Acionamento dos Órgãos Públicos nos Eventos Adversos.",
             fontSize = 18.sp,
             color = Color.White,
             textAlign = TextAlign.Center,

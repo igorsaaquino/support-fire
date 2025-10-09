@@ -1,6 +1,9 @@
-package com.example.supportfire.ui
+package com.example.supportfire.ui.screens
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -13,114 +16,216 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.supportfire.data.CsvDataStorage
 import com.example.supportfire.model.Registration
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RegistrationScreen(onRegistrationSuccess: () -> Unit) {
-    val context = LocalContext.current
-    val scope = rememberCoroutineScope()
-
+fun RegistrationScreen(onRegistrationSuccess: (String) -> Unit) {
+    // Gerenciadores de estado para cada campo do formulário
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
-    var gender by remember { mutableStateOf("") }
-    var bloodType by remember { mutableStateOf("") }
+    var birthDate by remember { mutableStateOf("") }
     var address by remember { mutableStateOf("") }
-    var neighborhood by remember { mutableStateOf("") }
     var city by remember { mutableStateOf("") }
     var state by remember { mutableStateOf("") }
-    var birthDate by remember { mutableStateOf("") }
-    var fatherName by remember { mutableStateOf("") }
-    var motherName by remember { mutableStateOf("") }
-    var desiredCourse by remember { mutableStateOf("") }
-    var discoverySource by remember { mutableStateOf("") }
+    // Adicione outros campos conforme necessário
+
     var hasError by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
-    Scaffold(
-        topBar = {
-            TopAppBar(title = { Text("Formulário de Pré-Inscrição") })
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+            .verticalScroll(rememberScrollState()), // Torna a coluna rolável
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "Formulário de Pré-Inscrição",
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+
+        if (hasError) {
+            Text(
+                "Por favor, preencha todos os campos.",
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
         }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(16.dp)
-                .verticalScroll(rememberScrollState()),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            if (hasError) {
-                Text(
-                    "Todos os campos são obrigatórios.",
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.padding(bottom = 10.dp)
-                )
-            }
 
-            // Campos do formulário...
-            CustomOutlinedTextField(value = name, onValueChange = { name = it }, label = "Nome Completo")
-            CustomOutlinedTextField(value = email, onValueChange = { email = it }, label = "E-mail", keyboardType = KeyboardType.Email)
-            CustomOutlinedTextField(value = phone, onValueChange = { phone = it }, label = "Telefone", keyboardType = KeyboardType.Phone)
-            CustomOutlinedTextField(value = gender, onValueChange = { gender = it }, label = "Sexo")
-            CustomOutlinedTextField(value = bloodType, onValueChange = { bloodType = it }, label = "Tipo Sanguíneo")
-            CustomOutlinedTextField(value = address, onValueChange = { address = it }, label = "Endereço (Rua, Nº)")
-            CustomOutlinedTextField(value = neighborhood, onValueChange = { neighborhood = it }, label = "Bairro")
-            CustomOutlinedTextField(value = city, onValueChange = { city = it }, label = "Cidade")
-            CustomOutlinedTextField(value = state, onValueChange = { state = it }, label = "Estado")
-            CustomOutlinedTextField(value = birthDate, onValueChange = { birthDate = it }, label = "Data de Nascimento (DD/MM/AAAA)")
-            CustomOutlinedTextField(value = fatherName, onValueChange = { fatherName = it }, label = "Nome do Pai")
-            CustomOutlinedTextField(value = motherName, onValueChange = { motherName = it }, label = "Nome da Mãe")
-            CustomOutlinedTextField(value = desiredCourse, onValueChange = { desiredCourse = it }, label = "Curso Desejado")
-            CustomOutlinedTextField(value = discoverySource, onValueChange = { discoverySource = it }, label = "Como soube do curso?", imeAction = ImeAction.Done)
+        // Campos de Texto para o formulário
+        OutlinedTextField(
+            value = name,
+            onValueChange = { name = it },
+            label = { Text("Nome Completo") },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true
+        )
+        Spacer(modifier = Modifier.height(8.dp))
 
-            Spacer(modifier = Modifier.height(24.dp))
+        OutlinedTextField(
+            value = email,
+            onValueChange = { email = it },
+            label = { Text("E-mail") },
+            modifier = Modifier.fillMaxWidth(),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+            singleLine = true
+        )
+        Spacer(modifier = Modifier.height(8.dp))
 
-            Button(
-                onClick = {
-                    val isFormValid = listOf(name, email, phone, gender, bloodType, address, neighborhood, city, state, birthDate, fatherName, motherName, desiredCourse, discoverySource).all { it.isNotBlank() }
+        OutlinedTextField(
+            value = phone,
+            onValueChange = { phone = it },
+            label = { Text("Telefone (com DDD)") },
+            modifier = Modifier.fillMaxWidth(),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+            singleLine = true
+        )
+        Spacer(modifier = Modifier.height(8.dp))
 
-                    if (isFormValid) {
-                        hasError = false
-                        // Correção
-                        val registrationData = Registration(name, email, phone, gender, bloodType, address, neighborhood, city, state, birthDate, fatherName, motherName, desiredCourse, discoverySource)
+        OutlinedTextField(
+            value = birthDate,
+            onValueChange = { birthDate = it },
+            label = { Text("Data de Nascimento (DD/MM/AAAA)") },
+            modifier = Modifier.fillMaxWidth(),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            singleLine = true
+        )
+        Spacer(modifier = Modifier.height(8.dp))
 
-                        scope.launch {
+        OutlinedTextField(
+            value = address,
+            onValueChange = { address = it },
+            label = { Text("Endereço (Rua, Nº, Bairro)") },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+
+        OutlinedTextField(
+            value = city,
+            onValueChange = { city = it },
+            label = { Text("Cidade") },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+
+        OutlinedTextField(
+            value = state,
+            onValueChange = { state = it },
+            label = { Text("Estado") },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true
+        )
+        // Adicione mais TextFields para os outros campos aqui
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Button(
+            onClick = {
+                // Validação simples
+                val isFormValid = name.isNotBlank() && email.isNotBlank() && phone.isNotBlank() &&
+                        birthDate.isNotBlank() && address.isNotBlank() && city.isNotBlank() && state.isNotBlank()
+
+                if (isFormValid) {
+                    hasError = false
+                    val registrationCode = generateUniqueCode()
+
+                    // Criando o objeto de registro
+                    val registrationData = Registration(
+                        name = name, email = email, phone = phone, gender = "",
+                        bloodType = "", address = address, neighborhood = "", city = city,
+                        state = state, birthDate = birthDate, fatherName = "", motherName = "",
+                        desiredCourse = "", discoverySource = ""
+                    )
+
+                    scope.launch {
+                        try {
+                            // 1. Salva os dados no arquivo
                             saveRegistration(context, registrationData)
-                            Toast.makeText(context, "Cadastro realizado com sucesso!", Toast.LENGTH_LONG).show()
-                            onRegistrationSuccess()
+
+                            // 2. CHAMA A FUNÇÃO PARA ENVIAR O E-MAIL
+                            sendConfirmationEmail(context, registrationData, registrationCode)
+
+                            // 3. Mostra feedback e navega
+                            Toast.makeText(context, "Cadastro enviado!", Toast.LENGTH_SHORT).show()
+                            onRegistrationSuccess(registrationCode)
+
+                        } catch (e: Exception) {
+                            // Lida com o erro aqui, onde 'context' está acessível
+                            Toast.makeText(context, "Erro ao salvar os dados.", Toast.LENGTH_LONG).show()
+                            Log.e("RegistrationScreen", "Falha ao salvar o cadastro", e)
                         }
-                    } else {
-                        hasError = true
                     }
-                },
-                modifier = Modifier.fillMaxWidth().height(50.dp)
-            ) {
-                Text("Enviar", fontSize = 18.sp)
-            }
+                } else {
+                    hasError = true
+                }
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
+        ) {
+            Text("Completar Pré-Inscrição", fontSize = 18.sp)
         }
     }
 }
 
-private suspend fun saveRegistration(context: Context, data: `Registration`) {
+private fun generateUniqueCode(): String {
+    return UUID.randomUUID().toString().substring(0, 8).uppercase()
+}
+
+private suspend fun saveRegistration(context: Context, data: Registration) {
     val storage = CsvDataStorage(context)
     storage.saveRegistration(data)
 }
 
-@Composable
-private fun CustomOutlinedTextField(value: String, onValueChange: (String) -> Unit, label: String, keyboardType: KeyboardType = KeyboardType.Text, imeAction: ImeAction = ImeAction.Next) {
-    OutlinedTextField(
-        value = value,
-        onValueChange = onValueChange,
-        label = { Text(label) },
-        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
-        singleLine = true,
-        keyboardOptions = KeyboardOptions(keyboardType = keyboardType, imeAction = imeAction)
-    )
+// <<< --- ADICIONE ESTA FUNÇÃO --- >>>
+private fun sendConfirmationEmail(context: Context, data: Registration, code: String) {
+    val ourEmail = "seu-email-de-contato@exemplo.com" // <-- SUBSTITUA PELO SEU E-MAIL
+    val subject = "Confirmação de Inscrição - Support Fire"
+    val body = """
+        Olá, ${data.name}!
+
+        Sua pré-inscrição no projeto Support Fire foi realizada com sucesso.
+        Seu código de verificação é: $code
+
+        Detalhes da Inscrição:
+        - Nome: ${data.name}
+        - E-mail: ${data.email}
+        - Telefone: ${data.phone}
+
+        Em breve, entraremos em contato com mais informações.
+
+        Atenciosamente,
+        Equipe Support Fire
+    """.trimIndent()
+
+    try {
+        val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
+            // Usar "mailto:" garante que apenas apps de e-mail sejam abertos
+            this.data = Uri.parse("mailto:")
+            putExtra(Intent.EXTRA_EMAIL, arrayOf(data.email)) // E-mail do usuário
+            putExtra(Intent.EXTRA_CC, arrayOf(ourEmail))      // Cópia para o seu e-mail
+            putExtra(Intent.EXTRA_SUBJECT, subject)
+            putExtra(Intent.EXTRA_TEXT, body)
+        }
+        // Inicia um seletor para que o usuário escolha seu app de e-mail
+        context.startActivity(Intent.createChooser(emailIntent, "Enviar E-mail de Confirmação..."))
+
+    } catch (ex: android.content.ActivityNotFoundException) {
+        // Caso o usuário não tenha nenhum app de e-mail instalado
+        Toast.makeText(context, "Não há aplicativos de e-mail instalados.", Toast.LENGTH_SHORT).show()
+    }
 }
