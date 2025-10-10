@@ -1,4 +1,4 @@
-package com.example.supportfire.ui.theme // Or your actual theme package
+package com.supportfire.supportfire.ui.theme // Or your actual theme package
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

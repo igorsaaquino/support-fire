@@ -1,4 +1,4 @@
-package com.example.supportfire.ui.theme
+package com.supportfire.supportfire.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

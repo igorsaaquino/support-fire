@@ -1,4 +1,4 @@
-package com.example.supportfire
+package com.supportfire.supportfire
 
 import org.junit.Test
 

@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:715803916755:android:02e382895f546711de5726",
         "android_client_info": {
-          "package_name": "com.example.supportfire"
+          "package_name": "br.com.supportfire.app"
         }
       },
       "oauth_client": [],

@@ -1,4 +1,4 @@
-package com.example.supportfire.model
+package br.com.supportfire.app.model
 
 data class Registration(
     val name: String,

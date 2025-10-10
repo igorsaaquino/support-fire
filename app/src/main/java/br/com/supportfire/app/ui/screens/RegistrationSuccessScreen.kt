@@ -1,4 +1,4 @@
-package com.example.supportfire.ui.screens
+package br.com.supportfire.app.ui.screens
 
 import android.content.Context
 import android.content.Intent
@@ -24,7 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.supportfire.ui.theme.Orange800
+import com.supportfire.supportfire.ui.theme.Orange800
 
 
 @Composable

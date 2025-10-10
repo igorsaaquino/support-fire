@@ -8,7 +8,7 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="com.conduit.app_5befea515c934d0ca01128114fb00809.app" />
+                  <option name="appId" value="br.com.supportfire.app" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
@@ -22,7 +22,7 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="com.example.supportfire" />
+                  <option name="appId" value="br.com.supportfire.app" />
                   <option name="mobileSdkAppId" value="1:715803916755:android:02e382895f546711de5726" />
                   <option name="projectId" value="supportfire-7a4cd" />
                   <option name="projectNumber" value="715803916755" />

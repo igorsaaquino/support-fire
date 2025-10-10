@@ -1,4 +1,4 @@
-package com.example.supportfire.navigation
+package br.com.supportfire.app.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavType
@@ -6,11 +6,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.supportfire.ui.HomeScreen
-import com.example.supportfire.ui.screens.BombeiroCivilScreen
-import com.example.supportfire.ui.screens.BrigadistaMirimScreen
-import com.example.supportfire.ui.screens.RegistrationScreen
-import com.example.supportfire.ui.screens.SocorristaScreen
+import br.com.supportfire.app.ui.HomeScreen
+
 import java.net.URLDecoder
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
@@ -45,7 +42,7 @@ fun AppNavigation() {
         }
 
         composable(AppRoutes.BOMBEIRO_CIVIL_DETAILS) {
-            BombeiroCivilScreen(
+            _root_ide_package_.br.com.supportfire.app.ui.screens.BombeiroCivilScreen(
                 onNavigateToRegistration = { courseName ->
                     navController.navigate(AppRoutes.registrationRoute(courseName))
                 },
@@ -56,7 +53,7 @@ fun AppNavigation() {
         }
 
         composable(AppRoutes.SOCORRISTA_DETAILS) {
-            SocorristaScreen(
+            _root_ide_package_.br.com.supportfire.app.ui.screens.SocorristaScreen(
                 onNavigateToRegistration = { courseName ->
                     navController.navigate(AppRoutes.registrationRoute(courseName))
                 },
@@ -67,7 +64,7 @@ fun AppNavigation() {
         }
 
         composable(AppRoutes.BRIGADISTA_MIRIM_DETAILS) {
-            BrigadistaMirimScreen(
+            _root_ide_package_.br.com.supportfire.app.ui.screens.BrigadistaMirimScreen(
                 onNavigateToRegistration = { courseName ->
                     navController.navigate(AppRoutes.registrationRoute(courseName))
                 },
@@ -84,7 +81,7 @@ fun AppNavigation() {
             val encodedCourseName = backStackEntry.arguments?.getString("courseName") ?: ""
             val courseName = URLDecoder.decode(encodedCourseName, StandardCharsets.UTF_8.toString())
 
-            RegistrationScreen(
+            _root_ide_package_.br.com.supportfire.app.ui.screens.RegistrationScreen(
                 selectedCourse = courseName,
                 onRegistrationSuccess = {
                     navController.popBackStack(AppRoutes.HOME, inclusive = false)

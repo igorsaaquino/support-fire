@@ -1,8 +1,17 @@
-package com.example.supportfire.ui
+package br.com.supportfire.app.ui
+
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -18,9 +27,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.supportfire.R // Certifique-se de que o import para R está correto
-import com.example.supportfire.ui.theme.Orange800
-import com.example.supportfire.ui.theme.SupportFireTheme
+import br.com.supportfire.app.R
+import com.supportfire.supportfire.ui.theme.Orange800
+import com.supportfire.supportfire.ui.theme.SupportFireTheme
 
 @Composable
 fun HomeScreen(onNavigateToCourseDetails: (String) -> Unit) {
@@ -42,7 +51,6 @@ fun HomeScreen(onNavigateToCourseDetails: (String) -> Unit) {
 
         // 1. Logo Centralizada ao Topo
         Image(
-            // ATENÇÃO: Verifique se 'support_fire_logo' é o nome correto da sua imagem na pasta res/drawable
             painter = painterResource(id = R.drawable.logo),
             contentDescription = "Logotipo do Support Fire",
             modifier = Modifier

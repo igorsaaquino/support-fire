@@ -1,7 +1,6 @@
-package com.example.supportfire
+package br.com.supportfire.app
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
@@ -12,23 +11,21 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.supportfire.ui.HomeScreen
-import com.example.supportfire.ui.screens.BombeiroCivilScreen
-import com.example.supportfire.ui.screens.BrigadistaMirimScreen
-import com.example.supportfire.ui.screens.RegistrationScreen
-import com.example.supportfire.ui.screens.RegistrationSuccessScreen
-import com.example.supportfire.ui.screens.SocorristaScreen
-import com.example.supportfire.ui.theme.SupportFireTheme
+import br.com.supportfire.app.ui.HomeScreen
+import com.supportfire.supportfire.ui.theme.SupportFireTheme
 import java.net.URLDecoder
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
-class MainActivity : ComponentActivity() {
+class MainActivity : androidx.activity.ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             SupportFireTheme {
-                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
                     val navController = rememberNavController()
                     NavHost(navController = navController, startDestination = "home") {
 
@@ -41,9 +38,12 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable("bombeiro_civil_details") {
-                            BombeiroCivilScreen(
+                            _root_ide_package_.br.com.supportfire.app.ui.screens.BombeiroCivilScreen(
                                 onNavigateToRegistration = { courseName ->
-                                    val encodedCourseName = URLEncoder.encode(courseName, StandardCharsets.UTF_8.toString())
+                                    val encodedCourseName = URLEncoder.encode(
+                                        courseName,
+                                        StandardCharsets.UTF_8.toString()
+                                    )
                                     navController.navigate("registration/$encodedCourseName")
                                 },
                                 onNavigateHome = {
@@ -53,9 +53,12 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable("socorrista_details") {
-                            SocorristaScreen(
+                            _root_ide_package_.br.com.supportfire.app.ui.screens.SocorristaScreen(
                                 onNavigateToRegistration = { courseName ->
-                                    val encodedCourseName = URLEncoder.encode(courseName, StandardCharsets.UTF_8.toString())
+                                    val encodedCourseName = URLEncoder.encode(
+                                        courseName,
+                                        StandardCharsets.UTF_8.toString()
+                                    )
                                     navController.navigate("registration/$encodedCourseName")
                                 },
                                 onNavigateHome = {
@@ -65,9 +68,12 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable("brigadista_mirim_details") {
-                            BrigadistaMirimScreen(
+                            _root_ide_package_.br.com.supportfire.app.ui.screens.BrigadistaMirimScreen(
                                 onNavigateToRegistration = { courseName ->
-                                    val encodedCourseName = URLEncoder.encode(courseName, StandardCharsets.UTF_8.toString())
+                                    val encodedCourseName = URLEncoder.encode(
+                                        courseName,
+                                        StandardCharsets.UTF_8.toString()
+                                    )
                                     navController.navigate("registration/$encodedCourseName")
                                 },
                                 onNavigateHome = {
@@ -78,12 +84,18 @@ class MainActivity : ComponentActivity() {
 
                         composable(
                             "registration/{courseName}",
-                            arguments = listOf(navArgument("courseName") { type = NavType.StringType })
+                            arguments = listOf(navArgument("courseName") {
+                                type = NavType.StringType
+                            })
                         ) { backStackEntry ->
-                            val encodedCourseName = backStackEntry.arguments?.getString("courseName") ?: ""
-                            val courseName = URLDecoder.decode(encodedCourseName, StandardCharsets.UTF_8.toString())
+                            val encodedCourseName =
+                                backStackEntry.arguments?.getString("courseName") ?: ""
+                            val courseName = URLDecoder.decode(
+                                encodedCourseName,
+                                StandardCharsets.UTF_8.toString()
+                            )
 
-                            RegistrationScreen(
+                            _root_ide_package_.br.com.supportfire.app.ui.screens.RegistrationScreen(
                                 selectedCourse = courseName,
                                 onRegistrationSuccess = { registrationCode ->
                                     navController.navigate("success/$registrationCode") {
@@ -98,13 +110,19 @@ class MainActivity : ComponentActivity() {
 
                         composable(
                             "success/{registrationCode}",
-                            arguments = listOf(navArgument("registrationCode") { type = NavType.StringType })
+                            arguments = listOf(navArgument("registrationCode") {
+                                type = NavType.StringType
+                            })
                         ) { backStackEntry ->
                             val code = backStackEntry.arguments?.getString("registrationCode")
-                            RegistrationSuccessScreen(
+                            _root_ide_package_.br.com.supportfire.app.ui.screens.RegistrationSuccessScreen(
                                 registrationCode = code,
                                 onGoToHome = {
-                                    navController.navigate("home") { popUpTo("home") { inclusive = true } }
+                                    navController.navigate("home") {
+                                        popUpTo("home") {
+                                            inclusive = true
+                                        }
+                                    }
                                 }
                             )
                         }

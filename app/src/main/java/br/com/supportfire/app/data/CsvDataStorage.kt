@@ -1,12 +1,11 @@
-package com.example.supportfire.data
+package br.com.supportfire.app.data
 
 import android.content.Context
-import com.example.supportfire.model.Registration
 import java.io.File
 import java.io.FileWriter
 
 class CsvDataStorage(private val context: Context) {
-    fun saveRegistration(data: Registration) {
+    fun saveRegistration(data: br.com.supportfire.app.model.Registration) {
         val file = File(context.filesDir, "registrations.csv")
         val writer = FileWriter(file, true) // O 'true' anexa ao arquivo existente
         writer.use {

@@ -1,0 +1,6 @@
+<component name="CopyrightManager">
+  <copyright>
+    <option name="notice" value="Copyright (c) &amp;#36;originalComment.match(&quot;Copyright \(c\) (\d+)&quot;, 1, &quot;-&quot;, &quot;&amp;#36;today.year&quot;)&amp;#36;today.year.  Todos os direitos reservados.&#10;Desenvolvido por Igor Silva Alencar de Aquino. Este software é protegido pela Lei nº 9.610/1998." />
+    <option name="myName" value="Igor Silva Alencar de Aquino" />
+  </copyright>
+</component>
