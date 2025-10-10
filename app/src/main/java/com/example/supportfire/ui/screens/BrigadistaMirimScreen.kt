@@ -56,7 +56,14 @@ fun BrigadistaMirimScreen(onNavigateToRegistration: (String) -> Unit, onNavigate
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(
-                text = "Fale sobre o projeto social do Brigadista Mirim. Descreva as atividades lúdicas e educativas, os valores de cidadania, prevenção de acidentes domésticos e respeito ao meio ambiente que são ensinados às crianças.",
+                text = "Curso de Brigadista Mirim\n" +
+                        " \n" +
+                        "\n" +
+                        "A MP Fire propôs a criação do “Curso de Brigadista Mirim” como um instrumento, atuando, especialmente, com foco na promoção da qualidade de vida, prevenção da criminalidade e da violência, através de um conjunto estruturado de políticas públicas voltadas para a inclusão social, integração e mobilização comunitária.\n" +
+                        " Esse conjunto de ações tem como eixos principais a defesa da vida, o respeito à cidadania e a garantia dos direitos fundamentais da criança e do adolescente.\n" +
+                        "No curso, os alunos aprenderão noções nas atividades de Defesa Civil, Primeiros Socorros, Combate a Incêndio, Oceanografia, Preservação do Meio Ambiente, Doenças Sexualmente Transmissíveis, Drogas e seus Malefícios, Profissões, Acidentes Domésticos, Acidentes Automobilísticos, Animais Peçonhentos e Acionamento dos Órgãos Públicos nos Eventos Adversos.\n" +
+                        " \n" +
+                        "\n",
                 fontSize = 18.sp,
                 color = Color.White.copy(alpha = 0.9f),
                 textAlign = TextAlign.Justify,

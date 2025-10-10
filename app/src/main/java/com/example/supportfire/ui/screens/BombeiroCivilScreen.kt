@@ -56,7 +56,47 @@ fun BombeiroCivilScreen(onNavigateToRegistration: (String) -> Unit, onNavigateHo
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(
-                text = "Descrição completa sobre o curso de Bombeiro Profissional Civil. Fale sobre a carga horária, os módulos, pré-requisitos, e o mercado de trabalho. Detalhe tudo que o aluno aprenderá.",
+                text = "O que é  Bombeiro Profissional Civil (BPC)?\n" +
+                        "\n" +
+                        "Considera-se Bombeiro Civil aquele que, habilitado , exerça, em caráter habitual, função remunerada e exclusiva de prevenção e combate a incêndio, como empregado contratado diretamente por empresas privadas ou públicas, sociedades de economia mista, ou empresas especializadas em prestação de serviços de prevenção e combate a  incêndio.\n" +
+                        "\n" +
+                        "DE ACORDO COM A LEI FEDERAL DE 11.901 DE 12 DE JANEIRO DE 2009 – A jornada do Bombeiro Civil é de 12 (doze) horas de trabalho por 36 (trinta e seis) horas de descanso, num total de 36 (trinta e seis) horas semanais.\n" +
+                        "\n" +
+                        "É assegurado ao Bombeiro Civil:\n" +
+                        "\n" +
+                        "I – uniforme especial a expensas do empregador;\n" +
+                        "II – seguro de vida em grupo, estipulado pelo empregador;\n" +
+                        "III – adicional de periculosidade de 30% (trinta por cento) do salário mensal sem os acréscimos resultantes de gratificações, prêmios ou participações nos lucros da empresa;\n" +
+                        "\n" +
+                        "O nosso Curso é PROFISSIONALIZANTE e cumpre os padrões exigidos na Resolução SEDEC nº 31 de 10 de janeiro de 2013.  Confira aqui no site do Corpo de Bombeiros a relação de empresas credenciadas.\n" +
+                        "\n" +
+                        "O curso é composto por aulas teóricas, práticas e simulados. As aulas teóricas ocorrem em ambientes de aprendizado climatizados com modernos recursos áudio visuais. Para a prática contamos com um avançado campo de treinamento com instalações modernas e criadas especialmente para proporcionar um treinamento de qualidade e realístico.\n" +
+                        "\n" +
+                        "CONTEÚDO DO CURSO:\n" +
+                        "PREVENÇÃO E COMBATE A INCÊNDIO;\n" +
+                        "EQUIPAMENTO DE COMBATE A INCÊNDIOS;\n" +
+                        "EQUIPAMENTO DE PROTEÇÃO INDIVIDUAL e COLETIVA;\n" +
+                        "TÉCNICAS DE ESCAPE E DE ABANDONO DE ÁREA\n" +
+                        "ATENDIMENTO PRÉ-HOSPITALAR;\n" +
+                        "SALVAMENTO EM ESPAÇO CONFINADO;\n" +
+                        "RESGATE EM ALTURA;\n" +
+                        "EMERGÊNCIA COM PRODUTOS PERIGOSOS;\n" +
+                        "CONHECER SOLUÇÕES E MEDIDAS ESTRUTURAIS E NÃO ESTRUTURAIS PARA A PROTEÇÃO DO PATRIMONIO;\n" +
+                        "SALVAMENTO TERRESTRE;\n" +
+                        "ENTRE OUTROS\n" +
+                        "\n" +
+                        "CARGA HORÁRIA / TURMAS:\n" +
+                        "80 HORAS;\n" +
+                        "Segunda, quarta e sexta das 18 às 22:00 horas e aos Sábados das 08:00 ás 17:00.\n" +
+                        "\n" +
+                        "PRÉ REQUISITOS:\n" +
+                        "SER BRASILEIRO OU ESTRANGEIRO COM SITUAÇÃO REGULAR NO BRASIL;\n" +
+                        "TER IDADE MÍNIMA DE 18 ANOS;\n" +
+                        "TER CURSADO PELO MENOS O QUINTO ANO DO ENSINO FUNDAMENTAL;\n" +
+                        "ESTAR EM DIA COM SUAS OBRIGAÇÕES ELEITORAIS E MILITARES;\n" +
+                        "POSSUIR CADASTRO DE PESSOA FÍSICA;\n" +
+                        "APRESENTAR ATESTADO MÉDICO\n" +
+                        "\n",
                 fontSize = 18.sp,
                 color = Color.White.copy(alpha = 0.9f),
                 textAlign = TextAlign.Justify,

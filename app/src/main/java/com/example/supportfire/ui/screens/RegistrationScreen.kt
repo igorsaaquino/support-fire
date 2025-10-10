@@ -1,5 +1,8 @@
 package com.example.supportfire.ui.screens
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -15,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -23,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import com.example.supportfire.ui.theme.Orange800
 import java.util.UUID
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegistrationScreen(
     selectedCourse: String,
@@ -48,6 +53,8 @@ fun RegistrationScreen(
             neighborhood.isNotBlank() && city.isNotBlank() && state.isNotBlank() &&
             birthDate.isNotBlank() && fatherName.isNotBlank() && motherName.isNotBlank() &&
             howDidYouHear.isNotBlank()
+
+    val context = LocalContext.current
 
     val backgroundBrush = Brush.verticalGradient(
         colors = listOf(Orange800, Color(0xFFD32F2F))
@@ -123,6 +130,34 @@ fun RegistrationScreen(
                 onClick = {
                     if (isFormValid) {
                         val registrationCode = UUID.randomUUID().toString().substring(0, 8)
+
+                        sendRegistrationEmail(
+                            context = context,
+                            adminRecipient = "igorsalencar1985@gmail.com",
+                            userRecipient = email,
+                            subject = "Nova Pré-Inscrição Recebida - Curso: $selectedCourse",
+                            body = """
+                                Uma nova pré-inscrição foi realizada pelo aplicativo.
+
+                                Código de Inscrição: $registrationCode
+
+                                --- DADOS DO CANDIDATO ---
+                                Curso Desejado: $selectedCourse
+                                Nome: $name
+                                E-mail: $email
+                                Telefone: $phone
+                                Sexo: $gender
+                                Tipo Sanguíneo: $bloodType
+                                Data de Nascimento: $birthDate
+                                Endereço: $address
+                                Bairro: $neighborhood
+                                Cidade: $city
+                                Estado: $state
+                                Nome do Pai: $fatherName
+                                Nome da Mãe: $motherName
+                                Como soube do curso?: $howDidYouHear
+                            """.trimIndent()
+                        )
                         onRegistrationSuccess(registrationCode)
                     }
                 },
@@ -130,7 +165,10 @@ fun RegistrationScreen(
                     containerColor = Color.White,
                     contentColor = Orange800
                 ),
-                modifier = Modifier.fillMaxWidth().height(50.dp).padding(horizontal = 32.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
+                    .padding(horizontal = 32.dp),
                 enabled = isFormValid
             ) {
                 Text(
@@ -141,6 +179,19 @@ fun RegistrationScreen(
             }
             Spacer(modifier = Modifier.height(32.dp))
         }
+    }
+}
+
+private fun sendRegistrationEmail(context: Context, adminRecipient: String, userRecipient: String, subject: String, body: String) {
+    val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
+        data = Uri.parse("mailto:")
+        putExtra(Intent.EXTRA_EMAIL, arrayOf(adminRecipient))
+        putExtra(Intent.EXTRA_CC, arrayOf(userRecipient))
+        putExtra(Intent.EXTRA_SUBJECT, subject)
+        putExtra(Intent.EXTRA_TEXT, body)
+    }
+    if (emailIntent.resolveActivity(context.packageManager) != null) {
+        context.startActivity(emailIntent)
     }
 }
 
@@ -203,17 +254,14 @@ private fun DropdownTextField(
                 label = { Text(label) },
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded) },
                 colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(
-                    // Cores para quando o campo está focado
                     focusedBorderColor = Color.White,
                     focusedLabelColor = Color.White,
                     focusedTextColor = Color.White,
                     focusedTrailingIconColor = Color.White,
-                    // Cores para quando o campo não está focado
                     unfocusedBorderColor = Color.White.copy(alpha = 0.7f),
                     unfocusedLabelColor = Color.White.copy(alpha = 0.7f),
                     unfocusedTextColor = Color.White,
                     unfocusedTrailingIconColor = Color.White,
-                    // Cor de fundo do campo
                     unfocusedContainerColor = Color.Transparent,
                     focusedContainerColor = Color.Transparent
                 ),
