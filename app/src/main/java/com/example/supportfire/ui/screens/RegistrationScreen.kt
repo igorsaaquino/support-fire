@@ -1,8 +1,6 @@
 package com.example.supportfire.ui.screens
 
-import android.content.Context
-import android.content.Intent
-import android.net.Uri
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -25,6 +23,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.supportfire.ui.theme.Orange800
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -48,153 +51,121 @@ fun RegistrationScreen(
     var motherName by remember { mutableStateOf("") }
     var howDidYouHear by remember { mutableStateOf("") }
 
+    var isLoading by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+
     val isFormValid = name.isNotBlank() && email.isNotBlank() && phone.isNotBlank() &&
             gender.isNotBlank() && bloodType.isNotBlank() && address.isNotBlank() &&
             neighborhood.isNotBlank() && city.isNotBlank() && state.isNotBlank() &&
             birthDate.isNotBlank() && fatherName.isNotBlank() && motherName.isNotBlank() &&
             howDidYouHear.isNotBlank()
 
-    val context = LocalContext.current
+    val backgroundBrush = Brush.verticalGradient(colors = listOf(Orange800, Color(0xFFD32F2F)))
 
-    val backgroundBrush = Brush.verticalGradient(
-        colors = listOf(Orange800, Color(0xFFD32F2F))
-    )
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(brush = backgroundBrush)
-            .statusBarsPadding()
-    ) {
-        IconButton(onClick = onNavigateHome) {
-            Icon(
-                imageVector = Icons.Default.ArrowBack,
-                contentDescription = "Voltar para a Home",
-                tint = Color.White
-            )
-        }
-
+    Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 16.dp)
-                .verticalScroll(rememberScrollState()),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .background(brush = backgroundBrush)
+                .statusBarsPadding()
         ) {
-            Text(
-                text = "Pré-Inscrição",
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White,
-                textAlign = TextAlign.Center
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            CustomOutlinedTextField(
-                value = selectedCourse,
-                label = "Curso Desejado",
-                readOnly = true
-            )
-
-            CustomOutlinedTextField(value = name, onValueChange = { name = it }, label = "Nome Completo *")
-            CustomOutlinedTextField(value = email, onValueChange = { email = it }, label = "E-mail *", keyboardType = KeyboardType.Email)
-            CustomOutlinedTextField(value = phone, onValueChange = { phone = it }, label = "Telefone *", keyboardType = KeyboardType.Phone)
-
-            DropdownTextField(
-                label = "Sexo *",
-                options = listOf("Masculino", "Feminino"),
-                selectedValue = gender,
-                onValueChange = { gender = it }
-            )
-
-            DropdownTextField(
-                label = "Tipo Sanguíneo *",
-                options = listOf("A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"),
-                selectedValue = bloodType,
-                onValueChange = { bloodType = it }
-            )
-
-            CustomOutlinedTextField(value = address, onValueChange = { address = it }, label = "Endereço *")
-            CustomOutlinedTextField(value = neighborhood, onValueChange = { neighborhood = it }, label = "Bairro *")
-            CustomOutlinedTextField(value = city, onValueChange = { city = it }, label = "Cidade *")
-            CustomOutlinedTextField(value = state, onValueChange = { state = it }, label = "Estado *")
-            CustomOutlinedTextField(value = birthDate, onValueChange = { birthDate = it }, label = "Data de Nascimento *", keyboardType = KeyboardType.Number)
-            CustomOutlinedTextField(value = fatherName, onValueChange = { fatherName = it }, label = "Nome do Pai *")
-            CustomOutlinedTextField(value = motherName, onValueChange = { motherName = it }, label = "Nome da Mãe *")
-            CustomOutlinedTextField(value = howDidYouHear, onValueChange = { howDidYouHear = it }, label = "Como soube do curso? *")
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            Button(
-                onClick = {
-                    if (isFormValid) {
-                        val registrationCode = UUID.randomUUID().toString().substring(0, 8)
-
-                        sendRegistrationEmail(
-                            context = context,
-                            adminRecipient = "igorsalencar1985@gmail.com",
-                            userRecipient = email,
-                            subject = "Nova Pré-Inscrição Recebida - Curso: $selectedCourse",
-                            body = """
-                                Uma nova pré-inscrição foi realizada pelo aplicativo.
-
-                                Código de Inscrição: $registrationCode
-
-                                --- DADOS DO CANDIDATO ---
-                                Curso Desejado: $selectedCourse
-                                Nome: $name
-                                E-mail: $email
-                                Telefone: $phone
-                                Sexo: $gender
-                                Tipo Sanguíneo: $bloodType
-                                Data de Nascimento: $birthDate
-                                Endereço: $address
-                                Bairro: $neighborhood
-                                Cidade: $city
-                                Estado: $state
-                                Nome do Pai: $fatherName
-                                Nome da Mãe: $motherName
-                                Como soube do curso?: $howDidYouHear
-                            """.trimIndent()
-                        )
-                        onRegistrationSuccess(registrationCode)
-                    }
-                },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.White,
-                    contentColor = Orange800
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp)
-                    .padding(horizontal = 32.dp),
-                enabled = isFormValid
-            ) {
-                Text(
-                    text = "Enviar Inscrição",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
+            IconButton(onClick = onNavigateHome) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Voltar",
+                    tint = Color.White
                 )
             }
-            Spacer(modifier = Modifier.height(32.dp))
+
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp)
+                    .verticalScroll(rememberScrollState()),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(text = "Pré-Inscrição", fontSize = 32.sp, fontWeight = FontWeight.Bold, color = Color.White, textAlign = TextAlign.Center)
+                Spacer(modifier = Modifier.height(16.dp))
+
+                CustomOutlinedTextField(value = selectedCourse, label = "Curso Desejado", readOnly = true)
+                CustomOutlinedTextField(value = name, onValueChange = { name = it }, label = "Nome Completo *")
+                CustomOutlinedTextField(value = email, onValueChange = { email = it }, label = "E-mail *", keyboardType = KeyboardType.Email)
+                CustomOutlinedTextField(value = phone, onValueChange = { phone = it }, label = "Telefone *", keyboardType = KeyboardType.Phone)
+                DropdownTextField(label = "Sexo *", options = listOf("Masculino", "Feminino"), selectedValue = gender, onValueChange = { gender = it })
+                DropdownTextField(label = "Tipo Sanguíneo *", options = listOf("A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"), selectedValue = bloodType, onValueChange = { bloodType = it })
+                CustomOutlinedTextField(value = address, onValueChange = { address = it }, label = "Endereço *")
+                CustomOutlinedTextField(value = neighborhood, onValueChange = { neighborhood = it }, label = "Bairro *")
+                CustomOutlinedTextField(value = city, onValueChange = { city = it }, label = "Cidade *")
+                CustomOutlinedTextField(value = state, onValueChange = { state = it }, label = "Estado *")
+                CustomOutlinedTextField(value = birthDate, onValueChange = { birthDate = it }, label = "Data de Nascimento *", keyboardType = KeyboardType.Number)
+                CustomOutlinedTextField(value = fatherName, onValueChange = { fatherName = it }, label = "Nome do Pai *")
+                CustomOutlinedTextField(value = motherName, onValueChange = { motherName = it }, label = "Nome da Mãe *")
+                CustomOutlinedTextField(value = howDidYouHear, onValueChange = { howDidYouHear = it }, label = "Como soube do curso? *")
+
+                Spacer(modifier = Modifier.height(32.dp))
+
+                Button(
+                    onClick = {
+                        if (isFormValid) {
+                            isLoading = true
+                            val db = Firebase.firestore
+                            val registrationCode = UUID.randomUUID().toString().substring(0, 8).uppercase()
+
+                            val registrationData = hashMapOf(
+                                "registrationCode" to registrationCode,
+                                "course" to selectedCourse,
+                                "name" to name,
+                                "email" to email,
+                                "phone" to phone,
+                                "gender" to gender,
+                                "bloodType" to bloodType,
+                                "birthDate" to birthDate,
+                                "address" to address,
+                                "neighborhood" to neighborhood,
+                                "city" to city,
+                                "state" to state,
+                                "fatherName" to fatherName,
+                                "motherName" to motherName,
+                                "howDidYouHear" to howDidYouHear,
+                                "timestamp" to SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).format(Date()),
+                                "status" to "Pendente" // Um status inicial
+                            )
+
+                            db.collection("inscricoes")
+                                .add(registrationData)
+                                .addOnSuccessListener {
+                                    isLoading = false
+                                    Toast.makeText(context, "Inscrição enviada com sucesso!", Toast.LENGTH_LONG).show()
+                                    onRegistrationSuccess(registrationCode)
+                                }
+                                .addOnFailureListener { e ->
+                                    isLoading = false
+                                    Toast.makeText(context, "Erro ao enviar: ${e.message}", Toast.LENGTH_LONG).show()
+                                }
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.White, contentColor = Orange800),
+                    modifier = Modifier.fillMaxWidth().height(50.dp).padding(horizontal = 32.dp),
+                    enabled = isFormValid && !isLoading
+                ) {
+                    Text(text = "Enviar Inscrição", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                }
+                Spacer(modifier = Modifier.height(32.dp))
+            }
+        }
+
+        if (isLoading) {
+            CircularProgressIndicator(
+                modifier = Modifier.align(Alignment.Center),
+                color = Color.White
+            )
         }
     }
 }
 
-private fun sendRegistrationEmail(context: Context, adminRecipient: String, userRecipient: String, subject: String, body: String) {
-    val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
-        data = Uri.parse("mailto:")
-        putExtra(Intent.EXTRA_EMAIL, arrayOf(adminRecipient))
-        putExtra(Intent.EXTRA_CC, arrayOf(userRecipient))
-        putExtra(Intent.EXTRA_SUBJECT, subject)
-        putExtra(Intent.EXTRA_TEXT, body)
-    }
-    if (emailIntent.resolveActivity(context.packageManager) != null) {
-        context.startActivity(emailIntent)
-    }
-}
 
+// As funções CustomOutlinedTextField e DropdownTextField permanecem exatamente as mesmas
+// ...
 @Composable
 private fun CustomOutlinedTextField(
     value: String,

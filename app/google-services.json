@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "715803916755",
+    "project_id": "supportfire-7a4cd",
+    "storage_bucket": "supportfire-7a4cd.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:715803916755:android:02e382895f546711de5726",
+        "android_client_info": {
+          "package_name": "com.example.supportfire"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDG7ROKiBtKQ7GwtZ8sqZCHSH_RVaaPblM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
