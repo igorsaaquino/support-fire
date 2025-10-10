@@ -28,7 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import br.com.supportfire.app.R
-import com.supportfire.supportfire.ui.theme.Orange800
+import br.com.supportfire.app.ui.theme.Orange800
 import com.supportfire.supportfire.ui.theme.SupportFireTheme
 
 @Composable

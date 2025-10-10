@@ -24,7 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.supportfire.supportfire.ui.theme.Orange800
+import br.com.supportfire.app.ui.theme.Orange800
 
 
 @Composable

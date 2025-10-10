@@ -1,3 +1,5 @@
+import com.android.build.api.variant.impl.VariantOutputImpl
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -27,6 +29,12 @@ android {
                 "proguard-rules.pro"
             )
         }
+        create("beta") {
+            initWith(getByName("release"))
+            applicationIdSuffix = ".beta"
+            versionNameSuffix = "-beta"
+            isJniDebuggable = true
+        }
     }
 
     compileOptions {
@@ -54,6 +62,9 @@ android {
 }
 
 dependencies {
+
+    implementation("androidx.core:core-splashscreen:1.1.0-rc01")
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -76,4 +87,26 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+}
+
+fun generateDynamicVersionCode(): Int {
+    return (System.currentTimeMillis() / 1000 / 60).toInt()
+}
+
+androidComponents {
+    onVariants(selector().withBuildType("release")) { variant ->
+        val newVersionCode = generateDynamicVersionCode()
+        variant.outputs.all { output ->
+            (output as? VariantOutputImpl)?.versionCode?.set(newVersionCode)
+            true // Required return value
+        }
+    }
+
+    onVariants(selector().withBuildType("beta")) { variant ->
+        val newVersionCode = generateDynamicVersionCode()
+        variant.outputs.all { output ->
+            (output as? VariantOutputImpl)?.versionCode?.set(newVersionCode)
+            true // Required return value
+        }
+    }
 }

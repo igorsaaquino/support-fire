@@ -44,7 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
-import com.supportfire.supportfire.ui.theme.Orange800
+import br.com.supportfire.app.ui.theme.Orange800
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale

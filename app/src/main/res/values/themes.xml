@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Tema para a Splash Screen -->
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <!-- Cor de fundo da tela (preto) -->
+        <item name="windowSplashScreenBackground">@android:color/black</item>
+        <!-- A imagem (logo) a ser exibida -->
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_screen</item>
+        <!-- O tema que o app usará DEPOIS que a splash screen terminar -->
+        <item name="postSplashScreenTheme">@style/Theme.SupportFire</item>
+    </style>
+
 
     <style name="Theme.SupportFire" parent="android:Theme.Material.Light.NoActionBar" />
 </resources>

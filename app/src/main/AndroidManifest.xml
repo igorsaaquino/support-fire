@@ -13,16 +13,17 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/Support_Fire"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:icon="@drawable/splash_screen"
+        android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.SupportFire"
+        android:roundIcon="@drawable/splash_screen"
         tools:targetApi="31">
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.SupportFire">
+            android:label="@string/app_name"
+            android:theme="@style/Theme.App.Starting">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
