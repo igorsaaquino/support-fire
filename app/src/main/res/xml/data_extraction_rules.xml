@@ -1,19 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-   Sample data extraction rules file; uncomment and customize as necessary.
-   See https://developer.android.com/about/versions/12/backup-restore#xml-changes
-   for details.
--->
+      REGRAS ATUALIZADAS PARA IMPEDIR O BACKUP E A TRANSFERÊNCIA DE DADOS.
+      Isso garante que dados de formulários não sejam salvos na conta Google do usuário
+      ou transferidos para outro dispositivo.
+    -->
 <data-extraction-rules>
     <cloud-backup>
-        <!-- TODO: Use <include> and <exclude> to control what is backed up.
-        <include .../>
-        <exclude .../>
-        -->
+        <!-- Exclui TODOS os arquivos, SharedPreferences, etc., do backup na nuvem -->
+        <exclude domain="root" />
+        <exclude domain="file" />
+        <exclude domain="database" />
+        <exclude domain="sharedpref" />
+        <exclude domain="external" />
     </cloud-backup>
-    <!--
     <device-transfer>
-        <include .../>
-        <exclude .../>
+        <!-- Exclui TODOS os dados da transferência de dispositivo para dispositivo -->
+        <exclude domain="root" />
+        <exclude domain="file" />
+        <exclude domain="database" />
+        <exclude domain="sharedpref" />
+        <exclude domain="external" />
     </device-transfer>
-    -->
 </data-extraction-rules>

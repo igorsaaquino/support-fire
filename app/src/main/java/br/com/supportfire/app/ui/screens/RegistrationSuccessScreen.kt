@@ -109,7 +109,7 @@ fun RegistrationSuccessScreen(
 // Função para abrir o WhatsApp
 private fun openWhatsApp(context: Context, registrationCode: String) {
     val phoneNumber =
-        "5521988232616" // SUBSTITUA PELO SEU NÚMERO DE WHATSAPP com código do país e DDD
+        "5521966294817" // SUBSTITUA PELO SEU NÚMERO DE WHATSAPP com código do país e DDD
     val message = "Olá, tenho uma dúvida sobre a minha inscrição. Meu código é $registrationCode."
 
     try {

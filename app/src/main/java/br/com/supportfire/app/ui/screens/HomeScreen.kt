@@ -97,7 +97,7 @@ fun HomeScreen(onNavigateToCourseDetails: (String) -> Unit) {
 
             CourseButton(
                 text = "Brigadista Mirim",
-                iconRes = R.drawable.ic_mirim_personalizado, // Exemplo de ícone
+                iconRes = R.drawable.ic_mirim_personalizado_png, // Exemplo de ícone
                 onClick = { onNavigateToCourseDetails("brigadista_mirim_details") }
             )
         }

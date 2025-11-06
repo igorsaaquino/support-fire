@@ -28,9 +28,12 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,17 +41,18 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.google.firebase.Firebase
-import com.google.firebase.firestore.firestore
+import br.com.supportfire.app.data.SheetApiClient
+import br.com.supportfire.app.data.model.RegistrationData
 import br.com.supportfire.app.ui.theme.Orange800
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
-import java.util.UUID
+import br.com.supportfire.app.ui.theme.SupportFireTheme
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -57,6 +61,7 @@ fun RegistrationScreen(
     onRegistrationSuccess: (String) -> Unit,
     onNavigateHome: () -> Unit
 ) {
+    // --- ESTADOS DO FORMULÁRIO ---
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
@@ -71,14 +76,51 @@ fun RegistrationScreen(
     var motherName by remember { mutableStateOf("") }
     var howDidYouHear by remember { mutableStateOf("") }
 
+    // --- ESTADOS DA UI E LÓGICA ---
     var isLoading by remember { mutableStateOf(false) }
-    val context = LocalContext.current
 
-    val isFormValid = name.isNotBlank() && email.isNotBlank() && phone.isNotBlank() &&
-            gender.isNotBlank() && bloodType.isNotBlank() && address.isNotBlank() &&
-            neighborhood.isNotBlank() && city.isNotBlank() && state.isNotBlank() &&
-            birthDate.isNotBlank() && fatherName.isNotBlank() && motherName.isNotBlank() &&
-            howDidYouHear.isNotBlank()
+    // NOVO: Estado para armazenar o código de registro quando a API retorna com sucesso.
+    var registrationCodeResult by remember { mutableStateOf<String?>(null) }
+
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+    val apiClient = remember { SheetApiClient() } // Instância única, como corrigido anteriormente
+
+    // --- VALIDAÇÃO DO FORMULÁRIO ---
+    val isFormValid by remember(
+        name,
+        email,
+        phone,
+        gender,
+        bloodType,
+        address,
+        neighborhood,
+        city,
+        state,
+        birthDate,
+        fatherName,
+        motherName,
+        howDidYouHear
+    ) {
+        derivedStateOf {
+            name.isNotBlank() && email.contains("@") && phone.length >= 10 &&
+                    gender.isNotBlank() && bloodType.isNotBlank() && address.isNotBlank() &&
+                    neighborhood.isNotBlank() && city.isNotBlank() && state.isNotBlank() &&
+                    birthDate.isNotBlank() && fatherName.isNotBlank() && motherName.isNotBlank() &&
+                    howDidYouHear.isNotBlank()
+        }
+    }
+
+    // --- EFEITO COLATERAL PARA NAVEGAÇÃO ---
+    // Este `LaunchedEffect` observa a variável `registrationCodeResult`.
+    // Quando ela mudar de `null` para um valor (o código), ele executará o bloco.
+    // O `Unit` como chave significa que este efeito só será lançado uma vez quando o Composable entrar na tela.
+    LaunchedEffect(registrationCodeResult) {
+        registrationCodeResult?.let { code ->
+            // Se o código não for nulo, navegue para a tela de sucesso.
+            onRegistrationSuccess(code)
+        }
+    }
 
     val backgroundBrush = Brush.verticalGradient(colors = listOf(Orange800, Color(0xFFD32F2F)))
 
@@ -105,14 +147,15 @@ fun RegistrationScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Pré-Inscrição",
-                    fontSize = 32.sp,
+                    text = "Formulário de Pré-Inscrição",
+                    fontSize = 28.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White,
                     textAlign = TextAlign.Center
                 )
                 Spacer(modifier = Modifier.height(16.dp))
 
+                // --- CAMPOS DE TEXTO ---
                 CustomOutlinedTextField(
                     value = selectedCourse,
                     label = "Curso Desejado",
@@ -121,7 +164,8 @@ fun RegistrationScreen(
                 CustomOutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = "Nome Completo *"
+                    label = "Nome Completo *",
+                    capitalization = KeyboardCapitalization.Words
                 )
                 CustomOutlinedTextField(
                     value = email,
@@ -132,7 +176,7 @@ fun RegistrationScreen(
                 CustomOutlinedTextField(
                     value = phone,
                     onValueChange = { phone = it },
-                    label = "Telefone *",
+                    label = "Telefone (com DDD) *",
                     keyboardType = KeyboardType.Phone
                 )
                 DropdownTextField(
@@ -148,97 +192,98 @@ fun RegistrationScreen(
                 CustomOutlinedTextField(
                     value = address,
                     onValueChange = { address = it },
-                    label = "Endereço *"
+                    label = "Endereço Completo (Rua, N°) *",
+                    capitalization = KeyboardCapitalization.Words
                 )
                 CustomOutlinedTextField(
                     value = neighborhood,
                     onValueChange = { neighborhood = it },
-                    label = "Bairro *"
+                    label = "Bairro *",
+                    capitalization = KeyboardCapitalization.Words
                 )
                 CustomOutlinedTextField(
                     value = city,
                     onValueChange = { city = it },
-                    label = "Cidade *"
+                    label = "Cidade *",
+                    capitalization = KeyboardCapitalization.Words
                 )
                 CustomOutlinedTextField(
                     value = state,
                     onValueChange = { state = it },
-                    label = "Estado *"
+                    label = "Estado *",
+                    capitalization = KeyboardCapitalization.Characters
                 )
                 CustomOutlinedTextField(
                     value = birthDate,
                     onValueChange = { birthDate = it },
-                    label = "Data de Nascimento *",
+                    label = "Data de Nascimento (DD/MM/AAAA) *",
                     keyboardType = KeyboardType.Number
                 )
                 CustomOutlinedTextField(
                     value = fatherName,
                     onValueChange = { fatherName = it },
-                    label = "Nome do Pai *"
+                    label = "Nome do Pai *",
+                    capitalization = KeyboardCapitalization.Words
                 )
                 CustomOutlinedTextField(
                     value = motherName,
                     onValueChange = { motherName = it },
-                    label = "Nome da Mãe *"
+                    label = "Nome da Mãe *",
+                    capitalization = KeyboardCapitalization.Words
                 )
                 CustomOutlinedTextField(
                     value = howDidYouHear,
                     onValueChange = { howDidYouHear = it },
-                    label = "Como soube do curso? *"
+                    label = "Como soube do curso? *",
+                    capitalization = KeyboardCapitalization.Sentences,
+                    imeAction = ImeAction.Done
                 )
 
                 Spacer(modifier = Modifier.height(32.dp))
 
+                // --- BOTÃO DE ENVIO ---
                 Button(
                     onClick = {
-                        if (isFormValid) {
+                        val registrationData = RegistrationData(
+                            course = selectedCourse,
+                            name = name,
+                            email = email,
+                            phone = phone,
+                            gender = gender,
+                            bloodType = bloodType,
+                            birthDate = birthDate,
+                            address = address,
+                            neighborhood = neighborhood,
+                            city = city,
+                            state = state,
+                            fatherName = fatherName,
+                            motherName = motherName,
+                            howDidYouHear = howDidYouHear
+                        )
+
+                        coroutineScope.launch {
                             isLoading = true
-                            val db = Firebase.firestore
-                            val registrationCode =
-                                UUID.randomUUID().toString().substring(0, 8).uppercase()
+                            val result =
+                                apiClient.submitRegistration(registrationData) // Executa a chamada
+                            isLoading = false
 
-                            val registrationData = hashMapOf(
-                                "registrationCode" to registrationCode,
-                                "course" to selectedCourse,
-                                "name" to name,
-                                "email" to email,
-                                "phone" to phone,
-                                "gender" to gender,
-                                "bloodType" to bloodType,
-                                "birthDate" to birthDate,
-                                "address" to address,
-                                "neighborhood" to neighborhood,
-                                "city" to city,
-                                "state" to state,
-                                "fatherName" to fatherName,
-                                "motherName" to motherName,
-                                "howDidYouHear" to howDidYouHear,
-                                "timestamp" to SimpleDateFormat(
-                                    "dd/MM/yyyy HH:mm:ss",
-                                    Locale.getDefault()
-                                ).format(Date()),
-                                "status" to "Pendente" // Um status inicial
-                            )
-
-                            db.collection("inscricoes")
-                                .add(registrationData)
-                                .addOnSuccessListener {
-                                    isLoading = false
-                                    Toast.makeText(
-                                        context,
-                                        "Inscrição enviada com sucesso!",
-                                        Toast.LENGTH_LONG
-                                    ).show()
-                                    onRegistrationSuccess(registrationCode)
-                                }
-                                .addOnFailureListener { e ->
-                                    isLoading = false
-                                    Toast.makeText(
-                                        context,
-                                        "Erro ao enviar: ${e.message}",
-                                        Toast.LENGTH_LONG
-                                    ).show()
-                                }
+                            if (result != null) {
+                                // SUCESSO: Atualiza o estado com o código recebido.
+                                // O `LaunchedEffect` vai detectar essa mudança e acionar a navegação.
+                                Toast.makeText(
+                                    context,
+                                    "Inscrição enviada com sucesso!",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                                registrationCodeResult = result
+                            } else {
+                                // FALHA: Mostra um erro.
+                                Toast.makeText(
+                                    context,
+                                    "Erro ao enviar inscrição. Verifique sua conexão e tente novamente.",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
                         }
                     },
                     colors = ButtonDefaults.buttonColors(
@@ -260,49 +305,52 @@ fun RegistrationScreen(
         if (isLoading) {
             CircularProgressIndicator(
                 modifier = Modifier.align(Alignment.Center),
-                color = Color.White
+                color = Color.White,
+                strokeWidth = 4.dp
             )
         }
     }
 }
 
 
-// As funções CustomOutlinedTextField e DropdownTextField permanecem exatamente as mesmas
-// ...
+// --- COMPONENTES REUTILIZÁVEIS E PREVIEW (permanecem iguais) ---
+
 @Composable
 private fun CustomOutlinedTextField(
     value: String,
-    onValueChange: (String) -> Unit = {},
+    onValueChange: (String) -> Unit = {}, // Provide a default empty lambda
     label: String,
+    readOnly: Boolean = false,
     keyboardType: KeyboardType = KeyboardType.Text,
-    readOnly: Boolean = false
+    capitalization: KeyboardCapitalization = KeyboardCapitalization.None,
+    imeAction: ImeAction = ImeAction.Next
 ) {
-    Column {
-        Spacer(modifier = Modifier.height(16.dp))
-        OutlinedTextField(
-            value = value,
-            onValueChange = onValueChange,
-            label = { Text(label) },
-            modifier = Modifier.fillMaxWidth(),
-            keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
-            singleLine = true,
-            readOnly = readOnly,
-            colors = TextFieldDefaults.colors(
-                focusedTextColor = Color.White,
-                unfocusedTextColor = if (readOnly) Color.White.copy(alpha = 0.7f) else Color.White,
-                cursorColor = Color.White,
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
-                focusedIndicatorColor = Color.White,
-                unfocusedIndicatorColor = Color.White.copy(alpha = 0.7f),
-                focusedLabelColor = Color.White,
-                unfocusedLabelColor = Color.White.copy(alpha = 0.7f),
-                disabledTextColor = Color.White.copy(alpha = 0.7f),
-                disabledIndicatorColor = Color.White.copy(alpha = 0.5f),
-                disabledLabelColor = Color.White.copy(alpha = 0.5f)
-            )
-        )
-    }
+    OutlinedTextField(
+        value = value,
+        onValueChange = onValueChange,
+        label = { Text(label, color = Color.White) },
+        singleLine = true,
+        readOnly = readOnly,
+        keyboardOptions = KeyboardOptions(
+            keyboardType = keyboardType,
+            capitalization = capitalization,
+            imeAction = imeAction
+        ),
+        colors = TextFieldDefaults.colors(
+            focusedTextColor = Color.White,
+            unfocusedTextColor = Color.White,
+            focusedContainerColor = Color.Black.copy(alpha = 0.3f),
+            unfocusedContainerColor = Color.Black.copy(alpha = 0.3f),
+            cursorColor = Color.White,
+            focusedIndicatorColor = Color.White,
+            unfocusedIndicatorColor = Color.White.copy(alpha = 0.7f),
+            focusedLabelColor = Color.White,
+            unfocusedLabelColor = Color.White.copy(alpha = 0.7f),
+        ),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -313,51 +361,64 @@ private fun DropdownTextField(
     selectedValue: String,
     onValueChange: (String) -> Unit
 ) {
-    var isExpanded by remember { mutableStateOf(false) }
+    var expanded by remember { mutableStateOf(false) }
 
-    Column {
-        Spacer(modifier = Modifier.height(16.dp))
-        ExposedDropdownMenuBox(
-            expanded = isExpanded,
-            onExpandedChange = { isExpanded = it }
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = !expanded },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+    ) {
+        OutlinedTextField(
+            value = selectedValue,
+            onValueChange = {}, // Input is read-only, selection happens in the menu
+            readOnly = true,
+            label = { Text(label, color = Color.White) },
+            trailingIcon = {
+                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+            },
+            colors = TextFieldDefaults.colors(
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White,
+                // The file content was cut off here, but assuming it continues...
+                focusedContainerColor = Color.Black.copy(alpha = 0.3f),
+                unfocusedContainerColor = Color.Black.copy(alpha = 0.3f),
+                cursorColor = Color.White,
+                focusedIndicatorColor = Color.White,
+                unfocusedIndicatorColor = Color.White.copy(alpha = 0.7f),
+                focusedLabelColor = Color.White,
+                unfocusedLabelColor = Color.White.copy(alpha = 0.7f)
+            ),
+            modifier = Modifier.menuAnchor() // Add menuAnchor modifier
+        )
+
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
         ) {
-            OutlinedTextField(
-                value = selectedValue,
-                onValueChange = {},
-                readOnly = true,
-                label = { Text(label) },
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded) },
-                colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = Color.White,
-                    focusedLabelColor = Color.White,
-                    focusedTextColor = Color.White,
-                    focusedTrailingIconColor = Color.White,
-                    unfocusedBorderColor = Color.White.copy(alpha = 0.7f),
-                    unfocusedLabelColor = Color.White.copy(alpha = 0.7f),
-                    unfocusedTextColor = Color.White,
-                    unfocusedTrailingIconColor = Color.White,
-                    unfocusedContainerColor = Color.Transparent,
-                    focusedContainerColor = Color.Transparent
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .menuAnchor()
-            )
-
-            ExposedDropdownMenu(
-                expanded = isExpanded,
-                onDismissRequest = { isExpanded = false }
-            ) {
-                options.forEach { option ->
-                    DropdownMenuItem(
-                        text = { Text(option) },
-                        onClick = {
-                            onValueChange(option)
-                            isExpanded = false
-                        }
-                    )
-                }
+            options.forEach { selectionOption ->
+                DropdownMenuItem(
+                    text = { Text(selectionOption) },
+                    onClick = {
+                        onValueChange(selectionOption)
+                        expanded = false
+                    }
+                )
             }
         }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview(showBackground = true)
+@Composable
+fun RegistrationScreenPreview() {
+    SupportFireTheme {
+        RegistrationScreen(
+            selectedCourse = "Bombeiro Civil",
+            onRegistrationSuccess = {},
+            onNavigateHome = {}
+        )
     }
 }

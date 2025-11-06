@@ -13,6 +13,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import br.com.supportfire.app.ui.HomeScreen
+import br.com.supportfire.app.ui.screens.BombeiroCivilScreen
+import br.com.supportfire.app.ui.screens.BrigadistaMirimScreen
+import br.com.supportfire.app.ui.screens.RegistrationScreen
+import br.com.supportfire.app.ui.screens.RegistrationSuccessScreen
+import br.com.supportfire.app.ui.screens.SocorristaScreen
 import br.com.supportfire.app.ui.theme.SupportFireTheme
 import java.net.URLDecoder
 import java.net.URLEncoder
@@ -41,7 +46,7 @@ class MainActivity : androidx.activity.ComponentActivity() {
                         }
 
                         composable("bombeiro_civil_details") {
-                            br.com.supportfire.app.ui.screens.BombeiroCivilScreen( // Corrected fully qualified name
+                            BombeiroCivilScreen( // Corrected fully qualified name
                                 onNavigateToRegistration = { courseName ->
                                     val encodedCourseName = URLEncoder.encode(
                                         courseName,
@@ -56,7 +61,7 @@ class MainActivity : androidx.activity.ComponentActivity() {
                         }
 
                         composable("socorrista_details") {
-                            br.com.supportfire.app.ui.screens.SocorristaScreen( // Corrected fully qualified name
+                            SocorristaScreen( // Corrected fully qualified name
                                 onNavigateToRegistration = { courseName ->
                                     val encodedCourseName = URLEncoder.encode(
                                         courseName,
@@ -71,7 +76,7 @@ class MainActivity : androidx.activity.ComponentActivity() {
                         }
 
                         composable("brigadista_mirim_details") {
-                            br.com.supportfire.app.ui.screens.BrigadistaMirimScreen( // Corrected fully qualified name
+                            BrigadistaMirimScreen( // Corrected fully qualified name
                                 onNavigateToRegistration = { courseName ->
                                     val encodedCourseName = URLEncoder.encode(
                                         courseName,
@@ -98,7 +103,7 @@ class MainActivity : androidx.activity.ComponentActivity() {
                                 StandardCharsets.UTF_8.toString()
                             )
 
-                            br.com.supportfire.app.ui.screens.RegistrationScreen( // Corrected fully qualified name
+                            RegistrationScreen( // Corrected fully qualified name
                                 selectedCourse = courseName,
                                 onRegistrationSuccess = { registrationCode ->
                                     navController.navigate("success/$registrationCode") {
@@ -118,7 +123,7 @@ class MainActivity : androidx.activity.ComponentActivity() {
                             })
                         ) { backStackEntry ->
                             val code = backStackEntry.arguments?.getString("registrationCode")
-                            br.com.supportfire.app.ui.screens.RegistrationSuccessScreen( // Corrected fully qualified name
+                            RegistrationSuccessScreen( // Corrected fully qualified name
                                 registrationCode = code,
                                 onGoToHome = {
                                     navController.navigate("home") {
